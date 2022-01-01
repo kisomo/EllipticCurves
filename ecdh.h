@@ -21,6 +21,8 @@ extern "C" {
 #define NIST_K409  8
 #define NIST_B571  9
 #define NIST_K571 10
+#define MUTHOKA_1 11
+#define MUTHOKA_B 12
 
 /* What is the default curve to use? */
 #ifndef ECC_CURVE
@@ -42,6 +44,12 @@ extern "C" {
   #define ECC_PRV_KEY_SIZE   52
  #elif (ECC_CURVE == NIST_K571) || (ECC_CURVE == NIST_B571)
   #define CURVE_DEGREE       571
+  #define ECC_PRV_KEY_SIZE   72
+ #elif (ECC_CURVE == MUTHOKA_1)
+  #define CURVE_DEGREE       13
+  #define ECC_PRV_KEY_SIZE   13
+ #elif (ECC_CURVE == MUTHOKA_B)
+  #define CURVE_DEGREE       256
   #define ECC_PRV_KEY_SIZE   72
  #endif
 #else

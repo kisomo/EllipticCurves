@@ -1133,9 +1133,38 @@ int main(int argc, char* argv[])
   printf("coeff_a = %x\n",coeff_a); printf("\n");
 
   printf("cofactor = %x\n",cofactor); printf("\n");
+  
 
+int b1 = bitvec_get_bit(polynomial, 163);
+printf("b1 = %d\n",b1);
+printf("idx = %u\n",3);
+printf("idx / 32U = %u\n",257/32U);
+printf("x[idx / 32U] = %X\n",polynomial[257/32U]);
+printf("idx & 31U = %u\n", 3 & 31U);
+printf("(idx & 31U) & 1U = %u\n", (3 & 31U) & 1U);
 
+uint8_t x = 14; uint8_t y = 14;
+printf("x >> 1 = %u\n", x >> 1); // 7
+printf("y << 1 = %u\n", y << 1); // 28
 
+int a = 1400; //14; 
+int b = 7000; //7;
+printf("a & b = %d\n", a & b); // 6
+printf("a & b = %x\n\n", a & b); // 6
+
+printf("a | b = %d\n", a | b); //15
+printf("a | b = %x\n\n", a | b); //15
+
+printf("a ^ b = %d\n", a ^ b); // 9 // XOR
+printf("a ^ b = %x\n\n", a ^ b); // 9 // XOR
+
+printf("32U = %d\n", 32U);
+printf("31U = %d\n", 31U);
+printf("1U = %d\n\n", 1U);
+
+int num = 68288;
+printf("num = %d\n", num);
+printf("num = %X\n", num);
 
   return 0;
 }

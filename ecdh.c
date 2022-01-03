@@ -276,8 +276,7 @@ static int bitvec_degree(const bitvec_t x)
   x += BITVEC_NWORDS;
 
   // Skip empty / zero words 
-  while (    (i > 0)
-          && (*(--x)) == 0)
+  while ( (i > 0) && (*(--x)) == 0)
   {
     i -= 32;
   }
@@ -1135,13 +1134,16 @@ int main(int argc, char* argv[])
   printf("cofactor = %x\n",cofactor); printf("\n");
   
 
-int b1 = bitvec_get_bit(polynomial, 163);
+//const uint32_t idx = 163;
+int idx = 163;
+
+int b1 = bitvec_get_bit(polynomial, idx);
 printf("b1 = %d\n",b1);
-printf("idx = %u\n",3);
-printf("idx / 32U = %u\n",257/32U);
-printf("x[idx / 32U] = %X\n",polynomial[257/32U]);
-printf("idx & 31U = %u\n", 3 & 31U);
-printf("(idx & 31U) & 1U = %u\n", (3 & 31U) & 1U);
+printf("idx = %u\n",idx);
+printf("idx / 32U = %u\n",idx/32U);
+printf("x[idx / 32U] = %X\n",polynomial[idx/32U]);
+printf("idx & 31U = %u\n", idx & 31U);
+printf("(idx & 31U) & 1U = %u\n", (idx & 31U) & 1U);
 
 uint8_t x = 14; uint8_t y = 14;
 printf("x >> 1 = %u\n", x >> 1); // 7
@@ -1165,6 +1167,164 @@ printf("1U = %d\n\n", 1U);
 int num = 68288;
 printf("num = %d\n", num);
 printf("num = %X\n", num);
+
+//======================================= bitvec_get_bit() ============================================================
+
+printf("\n\n");
+int words[6] = {31, 63, 95, 127, 159,191}; //,223, 255};
+idx = 0; /*
+for(int i =0; i <6; i++)
+{
+   idx = words[i];
+   printf("polynomial[%d / 32U] = %X\n",idx,polynomial[idx/32U]);
+   printf("idx & 31U = %u\n", idx & 31U);
+   printf("(idx & 31U) & 1U = %u\n", (idx & 31U) & 1U);
+   printf("bitvec_get_bit(polynomial, %d) = %X\n\n",idx,bitvec_get_bit(polynomial, idx));
+}
+
+
+for(int i =0; i <6; i++)
+{
+   idx = words[i];
+   printf("coeff_b[%d / 32U] = %X\n",idx,coeff_b[idx/32U]);
+   //printf("idx & 31U = %u\n", idx & 31U);
+   //printf("(idx & 31U) & 1U = %u\n", (idx & 31U) & 1U);
+   printf("bitvec_get_bit(coeff_b, %d) = %X\n\n",idx,bitvec_get_bit(coeff_b, idx));
+}
+
+for(int i =0; i <6; i++)
+{
+   idx = words[i];
+   printf("base_x[%d / 32U] = %X\n",idx,base_x[idx/32U]);
+   //printf("idx & 31U = %u\n", idx & 31U);
+   //printf("(idx & 31U) & 1U = %u\n", (idx & 31U) & 1U);
+   printf("bitvec_get_bit(base_x, %d) = %X\n\n",idx,bitvec_get_bit(base_x, idx));
+}
+
+for(int i =0; i <6; i++)
+{
+   idx = words[i];
+   printf("base_y[%d / 32U] = %X\n",idx,base_y[idx/32U]);
+   //printf("idx & 31U = %u\n", idx & 31U);
+   //printf("(idx & 31U) & 1U = %u\n", (idx & 31U) & 1U);
+   printf("bitvec_get_bit(base_y, %d) = %X\n\n",idx,bitvec_get_bit(base_y, idx));
+}
+
+for(int i =0; i <6; i++)
+{
+   idx = words[i];
+   printf("base_order[%d / 32U] = %X\n",idx,base_order[idx/32U]);
+   //printf("idx & 31U = %u\n", idx & 31U);
+   //printf("(idx & 31U) & 1U = %u\n", (idx & 31U) & 1U);
+   printf("bitvec_get_bit(base_order, %d) = %X\n\n",idx,bitvec_get_bit(base_order, idx));
+}
+*/
+
+//========================================================= bitvec_clr_bit() ======================================================================
+
+/*
+for(int i =0; i <6; i++)
+{
+   idx = words[i];
+   printf("polynomial[%d / 32U] = %X\n",idx,polynomial[idx/32U]);
+   printf("idx & 31U = %u\n", idx & 31U);
+   printf("1U << (idx & 31U) = %u\n", 1U << (idx & 31U));
+   printf("~(1U << (idx & 31U)) = %u\n", ~(1U << (idx & 31U)));
+   uint32_t res = polynomial[idx/32U];
+   printf("polynomial[%d / 32U] &= ~(1U << (%d & 31U)) = %X\n\n",idx,idx,res &= ~(1U << (idx & 31U)));
+}
+
+for(int i =0; i <6; i++)
+{
+   idx = words[i];
+   printf("coeff_b[%d / 32U] = %X\n",idx,coeff_b[idx/32U]);
+   printf("idx & 31U = %u\n", idx & 31U);
+   printf("1U << (idx & 31U) = %u\n", 1U << (idx & 31U));
+   printf("~(1U << (idx & 31U)) = %u\n", ~(1U << (idx & 31U)));
+   uint32_t res = coeff_b[idx/32U];
+   printf("coeff_b[%d / 32U] &= ~(1U << (%d & 31U)) = %X\n\n",idx,idx,res &= ~(1U << (idx & 31U)));
+}
+
+for(int i =0; i <6; i++)
+{
+   idx = words[i];
+   printf("base_x[%d / 32U] = %X\n",idx,base_x[idx/32U]);
+   printf("idx & 31U = %u\n", idx & 31U);
+   printf("1U << (idx & 31U) = %u\n", 1U << (idx & 31U));
+   printf("~(1U << (idx & 31U)) = %u\n", ~(1U << (idx & 31U)));
+   uint32_t res = base_x[idx/32U];
+   printf("base_x[%d / 32U] &= ~(1U << (%d & 31U)) = %X\n\n",idx,idx,res &= ~(1U << (idx & 31U)));
+}
+
+for(int i =0; i <6; i++)
+{
+   idx = words[i];
+   printf("base_y[%d / 32U] = %X\n",idx,base_y[idx/32U]);
+   printf("idx & 31U = %u\n", idx & 31U);
+   printf("1U << (idx & 31U) = %u\n", 1U << (idx & 31U));
+   printf("~(1U << (idx & 31U)) = %u\n", ~(1U << (idx & 31U)));
+   uint32_t res = base_y[idx/32U];
+   printf("base_y[%d / 32U] &= ~(1U << (%d & 31U)) = %X\n\n",idx,idx,res &= ~(1U << (idx & 31U)));
+}
+
+for(int i =0; i <6; i++)
+{
+   idx = words[i];
+   printf("base_order[%d / 32U] = %X\n",idx,base_order[idx/32U]);
+   printf("idx & 31U = %u\n", idx & 31U);
+   printf("1U << (idx & 31U) = %u\n", 1U << (idx & 31U));
+   printf("~(1U << (idx & 31U)) = %u\n", ~(1U << (idx & 31U)));
+   uint32_t res = base_order[idx/32U];
+   printf("base_order[%d / 32U] &= ~(1U << (%d & 31U)) = %X\n\n",idx,idx,res &= ~(1U << (idx & 31U)));
+}
+*/
+
+//================================================= bitvec_copy =======================================================================
+
+bitvec_t x_vec = { 0xccdaa3d9, 0x0536d538, 0x321f2e80, 0x5d38ff58, 0x89070fb0, 0x00000002 }; //base_y;
+const bitvec_t y_vec = { 0x99f8a5ef, 0xa2e0cc0d, 0x00020108, 0x00000000, 0x00000000, 0x00000004 };  // base_order;
+
+bitvec_copy(x_vec,y_vec);
+
+// ================================================= bitvec_swap =======================================================================
+
+bitvec_t y_vec2 = { 0x99f8a5ef, 0xa2e0cc0d, 0x00020108, 0x00000000, 0x00000000, 0x00000004 };  // base_order;
+bitvec_swap(x_vec,y_vec2);
+
+// ===================================================== bitvec_equal ===================================================================
+
+printf("bitvec_equal(x_vec,y_vec) = %d\n", bitvec_equal(x_vec,y_vec));
+printf("bitvec_equal(x_vec,y_vec2) = %d\n\n", bitvec_equal(x_vec,y_vec2));
+
+// ===================================================== bitvec_set_zero ==================================================================
+
+bitvec_t y_vec3 = { 0x99f8a5ef, 0xa2e0cc0d, 0x00020108, 0x00000000, 0x00000000, 0x00000004 };  // base_order;
+bitvec_set_zero(y_vec3);
+printf("bitvec_equal(x_vec,y_vec3) = %d\n\n", bitvec_equal(x_vec,y_vec3));
+
+// ================================================ bitvec_is_zero =========================================================================
+
+printf("bitvec_is_zero(x_vec) = %d\n", bitvec_is_zero(x_vec));
+printf("bitvec_is_zero(y_vec3) = %d\n\n", bitvec_is_zero(y_vec3));
+
+// ================================================ bitvec_degree ============================================================================
+
+printf("bitvec_degree(x_vec) = %d\n", bitvec_degree(x_vec));
+printf("bitvec_degree(y_vec) = %d\n", bitvec_degree(y_vec));
+printf("bitvec_degree(y_vec3) = %d\n\n", bitvec_degree(y_vec3));
+
+// ========================================= bitvec_lshift ====================================================================================
+
+bitvec_t x2 = { 0xccdaa3d9, 0x0536d538, 0x321f2e80, 0x5d38ff58, 0x89070fb0, 0x00000002 }; // base_y
+const bitvec_t y2 = { 0x99f8a5ef, 0xa2e0cc0d, 0x00020108, 0x00000000, 0x00000000, 0x00000004 };  // base_order;
+int nbits = 192;
+
+bitvec_lshift(x2,y2,nbits);
+
+
+
+
+
 
   return 0;
 }

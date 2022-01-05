@@ -1280,8 +1280,6 @@ for(int i =0; i <6; i++)
    printf("base_order[%d / 32U] &= ~(1U << (%d & 31U)) = %X\n\n",idx,idx,res &= ~(1U << (idx & 31U)));
 }
 
-*/
-
 
 //================================================= bitvec_copy =======================================================================
 
@@ -1325,11 +1323,34 @@ const bitvec_t y11 = { 0x99f8a5ef, 0xa2e0cc0d, 0x00020108, 0x00000000, 0x0000000
 for(int i=0; i< BITVEC_NWORDS; i++)
 {  printf("y11[%d] = %x\n",i,y11[i]); } printf("\n");
 
-x11 = x11 + BITVEC_NWORDS;
-
+//x11 =+ BITVEC_NWORDS;
+printf("BITVEC_NWORDS = %d\n", BITVEC_NWORDS);
+for(int i = 0; i<7;i++)
+{printf("x11[%d] = %X\n",i,x11[i]);
+printf("*(x11 + %d) = %X\n",i,*(x11 + i));}
 for(int i=0; i< BITVEC_NWORDS; i++)
 {  printf("y11[%d] = %x\n",i,y11[i]); } printf("\n");
+char name[] = "Kavyu";
+int nums[] = {2,3,5,7,11,13};
 
+for(int i = 0; i<7;i++)
+{
+  printf("name[%d] = %c\n",i, name[i]);
+  printf("name + %d = %s\n", i, (name +i));
+  printf("nums[%d] = %d\n",i,nums[i]);
+  //printf("(nums + %d) = %ls\n", i, (nums + i));
+  printf("*(nums + %d) = %d\n", i, *(nums + i));
+}
+
+char *lname ="Kisomo";
+printf("lname = %s\n", lname);
+printf("*lname = %d\n", *lname);
+for(int i = 0; i<8;i++)
+{
+  printf("lname[%d] = %c\n",i, lname[i]);
+  printf("*lname + %d = %d\n", i, *lname+i);
+}
+*/
 
 // ========================================= bitvec_lshift ====================================================================================
 
@@ -1338,6 +1359,18 @@ const bitvec_t y2 = { 0x99f8a5ef, 0xa2e0cc0d, 0x00020108, 0x00000000, 0x00000000
 int nbits = 192;
 
 bitvec_lshift(x2,y2,nbits);
+
+// ==================================================================================================
+//===================================================================================================
+//===================================================================================================
+
+
+
+
+
+
+
+
 
 
 

@@ -1350,21 +1350,149 @@ for(int i = 0; i<8;i++)
   printf("lname[%d] = %c\n",i, lname[i]);
   printf("*lname + %d = %d\n", i, *lname+i);
 }
-*/
+
 
 // ========================================= bitvec_lshift ====================================================================================
 
-bitvec_t x2 = { 0xccdaa3d9, 0x0536d538, 0x321f2e80, 0x5d38ff58, 0x89070fb0, 0x00000002 }; // base_y
-const bitvec_t y2 = { 0x99f8a5ef, 0xa2e0cc0d, 0x00020108, 0x00000000, 0x00000000, 0x00000004 };  // base_order;
-int nbits = 192;
+const unsigned char operand1    = 0x0A; //0000 1010
+const unsigned char operand2    = 0x0C; //0000 1100
+const unsigned char expectedAnd = 0x08; //0000 1000
+const unsigned char expectedOr  = 0x0E; //0000 1110
+const unsigned char expectedXor = 0x06; //0000 0110
+const unsigned char operand3    = 0x01; //0000 0001
+const unsigned char expectedNot = 0xFE; //1111 1110
+
+//bitvec_t x2 = { 0xccdaa3d9, 0x0536d538, 0x321f2e80, 0x5d38ff58, 0x89070fb0, 0x00000002 }; // base_y
+//const bitvec_t y2 = { 0x99f8a5ef, 0xa2e0cc0d, 0x00020108, 0x00000000, 0x00000000, 0x00000004 };  // base_order;
+bitvec_t x2 = { 0x0A, 0x0C, 0x08, 0x0E, 0x06, 0x00000002 }; 
+const bitvec_t y2 = { 0x01, 0xFE, 0x02, 0x00000000, 0x00000000, 0x00000004 };
+
+int nbits = 1;
+
+for(int i=0; i< BITVEC_NWORDS; i++)
+{  printf("x2[%d] = %X\n",i,x2[i]); } printf("\n");
+for(int i=0; i< BITVEC_NWORDS; i++)
+{  printf("y2[%d] = %X\n",i,y2[i]); } printf("\n");
 
 bitvec_lshift(x2,y2,nbits);
 
+for(int i=0; i< BITVEC_NWORDS; i++)
+{  printf("x2[%d] = %X\n",i,x2[i]); } printf("\n");
+for(int i=0; i< BITVEC_NWORDS; i++)
+{  printf("y2[%d] = %X\n",i,y2[i]); } printf("\n");
+
+
+
 // ==================================================================================================
-//===================================================================================================
+//====================== Z_p field arithmetic =======================================================
 //===================================================================================================
 
+// ============================ gf2field_set_one() ==============================================
+bitvec_t x2 = { 0x0A, 0x0C, 0x08, 0x0E, 0x06, 0x00000002 };
+for(int i=0; i< BITVEC_NWORDS; i++)
+{  printf("x2[%d] = %X\n",i,x2[i]); } printf("\n");
+gf2field_set_one(x2);
+for(int i=0; i< BITVEC_NWORDS; i++)
+{  printf("x2[%d] = %X\n",i,x2[i]); } printf("\n");
 
+
+// =================== gf2field_is_one(x)  ===============================================
+
+printf("gf2field_is_one(x2) = %d\n", gf2field_is_one(x2) );
+for(int i=0; i< BITVEC_NWORDS; i++)
+{  printf("x2[%d] = %X\n",i,x2[i]); } printf("\n");
+
+
+// ======================  gf2field_add(z, x, y) ===============================================
+
+//bitvec_t x2 = { 0xccdaa3d9, 0x0536d538, 0x321f2e80, 0x5d38ff58, 0x89070fb0, 0x00000002 }; // base_y
+bitvec_t z = { 0x99f8a5ef, 0xa2e0cc0d, 0x00020108, 0x00000000, 0x00000000, 0x00000004 };  // base_order;
+bitvec_t x3 = { 0x0A, 0x0C, 0x08, 0x0E, 0x06, 0x00000002 }; 
+const bitvec_t y3 = { 0x01, 0xFE, 0x02, 0x00000000, 0x00000000, 0x00000004 };
+
+for(int i=0; i< BITVEC_NWORDS; i++)
+{  printf("z[%d] = %X\n",i,z[i]); } printf("\n");
+gf2field_add(z, x3, y3);
+for(int i=0; i< BITVEC_NWORDS; i++)
+{  printf("z[%d] = %X\n",i,z[i]); } printf("\n");
+
+// ======================= gf2field_inc(x)====================================================
+for(int i=0; i< BITVEC_NWORDS; i++)
+{  printf("x3[%d] = %X\n",i,x3[i]); } printf("\n");
+gf2field_inc(x3);
+for(int i=0; i< BITVEC_NWORDS; i++)
+{  printf("x3[%d] = %X\n",i,x3[i]); } printf("\n");
+
+// ======================= gf2field_mul(z, x, y)================================================
+for(int i=0; i< BITVEC_NWORDS; i++)
+{  printf("z[%d] = %X\n",i,z[i]); } printf("\n");
+gf2field_mul(z, x3, y3);
+for(int i=0; i< BITVEC_NWORDS; i++)
+{  printf("z[%d] = %X\n",i,z[i]); } printf("\n");
+
+// ======================= gf2field_inv(z,x) ================================================
+for(int i=0; i< BITVEC_NWORDS; i++)
+{  printf("z[%d] = %X\n",i,z[i]); } printf("\n");
+gf2field_inv(z, x3);
+for(int i=0; i< BITVEC_NWORDS; i++)
+{  printf("z[%d] = %X\n",i,z[i]); } printf("\n");
+*/
+
+// =======================================================================================================
+//========================= G(2^m) field operations ===================================================
+// =======================================================================================================
+
+bitvec_t x1 = { 0xccdaa3d9, 0x0536d538, 0x321f2e80, 0x5d38ff58, 0x89070fb0, 0x00000002 }; // base_y
+bitvec_t y1 = { 0x99f8a5ef, 0xa2e0cc0d, 0x00020108, 0x00000000, 0x00000000, 0x00000004 };  // base_order;
+const bitvec_t x2 = { 0x0A, 0x0C, 0x08, 0x0E, 0x06, 0x02 }; 
+const bitvec_t y2 = { 0x01, 0xFE, 0x02, 0x0AB, 0x0BA, 0x0C4 };
+
+for(int i=0; i< BITVEC_NWORDS; i++)
+{  printf("x1[%d] = %X\n",i,x1[i]); } printf("\n");
+gf2point_copy(x1, y1, x2, y2);
+for(int i=0; i< BITVEC_NWORDS; i++)
+{  printf("x1[%d] = %X\n",i,x1[i]); } printf("\n");
+
+// ======================= gf2point_set_zero(x, y) ===================================================
+
+gf2elem_t x3 = { 0x0A, 0x0C, 0x08, 0x0E, 0x06, 0x02 }; 
+gf2elem_t y3 = { 0x01, 0xFE, 0x02, 0x0AB, 0x0BA, 0x0C4 };
+for(int i=0; i< BITVEC_NWORDS; i++)
+{  printf("x3[%d] = %X\n",i,x3[i]); } printf("\n");
+gf2point_set_zero(x3, y3);
+for(int i=0; i< BITVEC_NWORDS; i++)
+{  printf("x3[%d] = %X\n",i,x3[i]); } printf("\n");
+
+// ===========================  gf2point_is_zero(x, y)===============================================
+
+printf("gf2point_is_zero(x3, y3) = %d\n", gf2point_is_zero(x3, y3));
+printf("gf2point_is_zero(x2, y2) = %d\n", gf2point_is_zero(x2, y2));
+printf("gf2point_is_zero(x2, y3) = %d\n", gf2point_is_zero(x2, y3));
+
+// ============================= gf2point_double(gf2elem_t x, gf2elem_t y) ===========================
+
+
+
+
+
+
+// =============================== gf2point_add(x1, y1, x2, y2) =====================================
+
+// add two points together (x1, y1) := (x1, y1) + (x2, y2) 
+
+//gf2point_add(gf2elem_t x1, gf2elem_t y1, const gf2elem_t x2, const gf2elem_t y2)
+
+
+
+
+
+
+
+
+
+//======================================================================================================
+//================ ECDH ================================================================================
+//======================================================================================================
 
 
 

@@ -1469,22 +1469,113 @@ printf("gf2point_is_zero(x3, y3) = %d\n", gf2point_is_zero(x3, y3));
 printf("gf2point_is_zero(x2, y2) = %d\n", gf2point_is_zero(x2, y2));
 printf("gf2point_is_zero(x2, y3) = %d\n", gf2point_is_zero(x2, y3));
 
-// ============================= gf2point_double(gf2elem_t x, gf2elem_t y) ===========================
+// ============================= gf2point_double(x, y) ============================================
 
-
-
-
+gf2elem_t x4 = { 0x0A, 0x0C, 0x08, 0x0E, 0x06, 0x02 }; 
+gf2elem_t y4 = { 0x01, 0xFE, 0x02, 0x0AB, 0x0BA, 0x0C4 };
+for(int i=0; i< BITVEC_NWORDS; i++)
+{  printf("x4[%d] = %X\n",i,x4[i]); } printf("\n");
+gf2point_double(x4, y4);
+for(int i=0; i< BITVEC_NWORDS; i++)
+{  printf("x4[%d] = %X\n",i,x4[i]); } printf("\n");
 
 
 // =============================== gf2point_add(x1, y1, x2, y2) =====================================
-
 // add two points together (x1, y1) := (x1, y1) + (x2, y2) 
+//gf2elem_t x1 = { 0x0A, 0x0C, 0x08, 0x0E, 0x06, 0x02 }; 
+//gf2elem_t y1 = { 0x01, 0xFE, 0x02, 0x0AB, 0x0BA, 0x0C4 };
+//gf2elem_t x2 = { 0x0A, 0x0C, 0x08, 0x0E, 0x06, 0x02 }; 
+//gf2elem_t y2 = { 0x01, 0xFE, 0x02, 0x0AB, 0x0BA, 0x0C4 };
+for(int i=0; i< BITVEC_NWORDS; i++)
+{  printf("x1[%d] = %X\n",i,x1[i]); } printf("\n");
+gf2point_add(x1, y1, x2, y2);
+for(int i=0; i< BITVEC_NWORDS; i++)
+{  printf("x1[%d] = %X\n",i,x1[i]); } printf("\n");
 
-//gf2point_add(gf2elem_t x1, gf2elem_t y1, const gf2elem_t x2, const gf2elem_t y2)
+
+// ====================== gf2point_mul(x, y, exp) =================================================
+for(int i=0; i< BITVEC_NWORDS; i++)
+{  printf("x1[%d] = %X\n",i,x1[i]); } printf("\n");
+const scalar_t exp = {0x01, 0xFE, 0x02, 0x0AB, 0x0BA, 0x0C4};
+gf2point_mul(x1, y1, exp);
+for(int i=0; i< BITVEC_NWORDS; i++)
+{  printf("x1[%d] = %X\n",i,x1[i]); } printf("\n");
 
 
+//===================== gf2point_on_curve(x, y) ===================================================
+
+printf("gf2point_on_curve(x1, y1) = %d\n",gf2point_on_curve(x1, y1));
 
 
+// ================================================================================================
+// ================== generate points on the curve ================================================
+// ================================================================================================
+
+uint32_t generate_hex(void)
+{ uint32_t x;
+  x = rand() & 0xff;
+  x |= (rand() & 0xff) << 8;
+  x |= (rand() & 0xff) << 16;
+  x |= (rand() & 0xff) << 24;
+  return x;
+}
+
+printf("generate_hex() = %X\n", generate_hex());
+printf("generate_hex() = %X\n", generate_hex());
+printf("generate_hex() = %X\n", generate_hex());
+printf("generate_hex() = %X\n", generate_hex());
+
+void generate_point(gf2elem_t xx)
+{ 
+  for(int i=0; i< BITVEC_NWORDS; i++)
+  {
+    xx[i] = generate_hex(); 
+  } 
+
+}
+
+gf2elem_t xx = {};
+generate_point(xx);
+for(int i=0; i< BITVEC_NWORDS; i++)
+{  printf("xx[%d] = %X\n",i,xx[i]); } printf("\n");
+generate_point(xx);
+for(int i=0; i< BITVEC_NWORDS; i++)
+{  printf("xx[%d] = %X\n",i,xx[i]); } printf("\n");
+
+void generate_pointoncurve(gf2elem_t xx, gf2elem_t yy)
+{
+  //gf2elem_t xx = {};gf2elem_t yy = {};
+  while(1)
+  {
+    generate_point(xx);generate_point(yy);
+    if(gf2point_on_curve(xx,yy)){
+      break;
+    }
+  }
+
+}
+
+gf2elem_t xx2 = {};gf2elem_t yy2 = {};
+for(int i=0; i< BITVEC_NWORDS; i++)
+{  printf("%X",xx[i]); } printf("\n");
+
+//generate_pointoncurve(xx2, yy2);
+//printf("generate_pointoncurve(xx, yy) = %d\n", generate_pointoncurve(xx, yy));
+//for(int i=0; i< BITVEC_NWORDS; i++)
+//{  printf("yy2[%d] = %X\n",i,yy2[i]); } printf("\n");
+
+gf2elem_t priv = {};gf2elem_t pub = {};
+
+
+void generate_pub_priv(void)
+{
+   gf2elem_t k = {};
+   generate_point(k);
+   generate_point(priv);
+   //gf2point_mul(gf2elem_t x, gf2elem_t y, const scalar_t k);
+   gf2point_mul(base_x, base_y, k);
+  
+}
 
 
 

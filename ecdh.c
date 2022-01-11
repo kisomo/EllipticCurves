@@ -1569,13 +1569,30 @@ gf2elem_t priv = {};gf2elem_t pub = {};
 
 void generate_pub_priv(void)
 {
-   gf2elem_t k = {};
+   gf2elem_t k = {};gf2elem_t x1 = {}; gf2elem_t y1 = {};
    generate_point(k);
    generate_point(priv);
+   for(int i=0; i< BITVEC_NWORDS; i++)
+   {printf("%X",x1[i]); } printf("\n");
+   //gf2point_copy(gf2elem_t x1, gf2elem_t y1, const gf2elem_t x2, const gf2elem_t y2)
    //gf2point_mul(gf2elem_t x, gf2elem_t y, const scalar_t k);
-   gf2point_mul(base_x, base_y, k);
-  
+   gf2point_copy(x1, y1, base_x, base_y);
+   gf2point_mul(x1, y1, k);
+
+   printf("gf2point_on_curve(x1, y1) = %d\n",gf2point_on_curve(x1, y1));
+
+   for(int i=0; i< BITVEC_NWORDS; i++)
+   {printf("%X",x1[i]); } printf("\n");
+
+   for(int i=0; i< BITVEC_NWORDS; i++)
+   {printf("%X",y1[i]); } printf("\n");
+
 }
+
+generate_pub_priv();
+
+//https://stackoverflow.com/questions/2262386/generate-sha256-with-openssl-and-c/10632725
+
 
 
 

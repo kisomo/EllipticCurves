@@ -1,0 +1,8 @@
+It can be machine-readable, which means that security products can ingest it through feeds 
+or API integration. Tactical intelligence is the easiest type of intelligence to generate and 
+is almost always automated. As a result, it can be found via open source and free data feeds,
+ but it usually has a very short lifespan because IOCs such as malicious IPs or domain names 
+ can become obsolete in days or even hours. It’s important to note that simply subscribing to 
+ intel feeds can result in plenty of data, but offers little means to digest and strategically 
+ analyze the threats relevant to you. Also, false positives can occur when the source is not 
+ timely or of high fidelity.

@@ -1564,34 +1564,41 @@ for(int i=0; i< BITVEC_NWORDS; i++)
 //for(int i=0; i< BITVEC_NWORDS; i++)
 //{  printf("yy2[%d] = %X\n",i,yy2[i]); } printf("\n");
 
-gf2elem_t priv = {};gf2elem_t pub = {};
+//gf2elem_t priv = {};gf2elem_t pub = {};
 
-
-void generate_pub_priv(void)
+//// NOTE: private should contain random data a-priori! 
+void generate_pub_priv(uint8_t* pub, uint8_t* priv)
 {
-   gf2elem_t k = {};gf2elem_t x1 = {}; gf2elem_t y1 = {};
-   generate_point(k);
-   generate_point(priv);
-   for(int i=0; i< BITVEC_NWORDS; i++)
-   {printf("%X",x1[i]); } printf("\n");
+   //gf2elem_t k = {};//gf2elem_t x1 = {}; gf2elem_t y1 = {};
+   //generate_point(k);
+   //generate_point(priv);
+   //for(int i=0; i< BITVEC_NWORDS; i++)
+   //{printf("%X",x1[i]); } printf("\n");
    //gf2point_copy(gf2elem_t x1, gf2elem_t y1, const gf2elem_t x2, const gf2elem_t y2)
    //gf2point_mul(gf2elem_t x, gf2elem_t y, const scalar_t k);
-   gf2point_copy(x1, y1, base_x, base_y);
-   gf2point_mul(x1, y1, k);
+   printf("pub = %hhn\n",pub);
+   printf("priv = %hhn\n",priv);
+   gf2point_copy((uint32_t *)pub, (uint32_t *)(pub + BITVEC_NBYTES), base_x, base_y);
+   //gf2point_mul(x1, y1, k);
 
-   printf("gf2point_on_curve(x1, y1) = %d\n",gf2point_on_curve(x1, y1));
+   //printf("gf2point_on_curve(x1, y1) = %d\n",gf2point_on_curve(x1, y1));
 
    for(int i=0; i< BITVEC_NWORDS; i++)
-   {printf("%X",x1[i]); } printf("\n");
+   {printf("%X",pub[i]); } printf("\n");
 
    for(int i=0; i< BITVEC_NWORDS; i++)
-   {printf("%X",y1[i]); } printf("\n");
+   {printf("%X",priv[i]); } printf("\n");
 
 }
+//uint32_t *n1; n1 = (uint8_t *)generate_hex(); 
+//uint32_t *n2;n2 = (uint8_t *)generate_hex(); 
 
-generate_pub_priv();
-
-//https://stackoverflow.com/questions/2262386/generate-sha256-with-openssl-and-c/10632725
+uint8_t generate_hex8(void)
+{ uint8_t x;
+  x = rand() & 0xff;
+  return x;
+}
+generate_pub_priv((uint8_t )generate_hex8(),(uint8_t )generate_hex8());
 
 
 

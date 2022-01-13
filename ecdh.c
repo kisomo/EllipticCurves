@@ -1567,27 +1567,31 @@ for(int i=0; i< BITVEC_NWORDS; i++)
 //gf2elem_t priv = {};gf2elem_t pub = {};
 
 //// NOTE: private should contain random data a-priori! 
-void generate_pub_priv(uint8_t* pub, uint8_t* priv)
-{
-   //gf2elem_t k = {};//gf2elem_t x1 = {}; gf2elem_t y1 = {};
-   //generate_point(k);
-   //generate_point(priv);
-   //for(int i=0; i< BITVEC_NWORDS; i++)
-   //{printf("%X",x1[i]); } printf("\n");
-   //gf2point_copy(gf2elem_t x1, gf2elem_t y1, const gf2elem_t x2, const gf2elem_t y2)
-   //gf2point_mul(gf2elem_t x, gf2elem_t y, const scalar_t k);
-   printf("pub = %hhn\n",pub);
-   printf("priv = %hhn\n",priv);
+int generate_pub_priv(uint8_t* pub, uint8_t* priv)
+{  int i;
+   //printf("pub = %u\n",*pub);
+   //printf("priv = %u\n",*priv);
    gf2point_copy((uint32_t *)pub, (uint32_t *)(pub + BITVEC_NBYTES), base_x, base_y);
-   //gf2point_mul(x1, y1, k);
+   
+   //for(i=0; i< BITVEC_NWORDS; i++)
+   //{printf("%X",pub[i]); } printf("\n");
+   //for(int i=0; i< BITVEC_NWORDS; i++)
+   //{printf("%X",priv[i]); } printf("\n");
 
-   //printf("gf2point_on_curve(x1, y1) = %d\n",gf2point_on_curve(x1, y1));
+   // Abort key generation if random number is too small 
+  if (bitvec_degree((uint32_t*)priv) < (CURVE_DEGREE / 2))
+  { return 0; }
+  else
+  {
+    // Clear bits > CURVE_DEGREE in highest word to satisfy constraint 1 <= exp < n. 
+    int nbits = bitvec_degree(base_order);
+    for (i = (nbits - 1); i < (BITVEC_NWORDS * 32); ++i)
+    { bitvec_clr_bit((uint32_t*)priv, i); }
+    // Multiply base-point with scalar (private-key) 
+    gf2point_mul((uint32_t*)pub, (uint32_t*)(pub + BITVEC_NBYTES), (uint32_t*)priv);
 
-   for(int i=0; i< BITVEC_NWORDS; i++)
-   {printf("%X",pub[i]); } printf("\n");
-
-   for(int i=0; i< BITVEC_NWORDS; i++)
-   {printf("%X",priv[i]); } printf("\n");
+    return 1;
+  }
 
 }
 //uint32_t *n1; n1 = (uint8_t *)generate_hex(); 
@@ -1598,8 +1602,14 @@ uint8_t generate_hex8(void)
   x = rand() & 0xff;
   return x;
 }
-generate_pub_priv((uint8_t )generate_hex8(),(uint8_t )generate_hex8());
 
+printf("generate_hex8() = %u\n", generate_hex8());
+uint8_t n1 = generate_hex8(); printf("n1 = %u\n",n1);
+uint8_t n2 = generate_hex8(); printf("n2 = %u\n",n2);
+generate_pub_priv(&n1,&n2);
+printf("n1 = %u\n",n1);
+//for(int i=0; i< BITVEC_NWORDS; i++)
+//{printf("%X",n1[i]); } printf("\n");
 
 
 

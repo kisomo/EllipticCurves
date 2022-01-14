@@ -1616,7 +1616,20 @@ printf("n3 = %u\n",n3);
 
 assert(ecdh_generate_keys(&n1, &n2));
 
+// 3. Alice calculates S = a * Q = a * (b * g). 
+assert(ecdh_shared_secret(n2, n1, seca));
 
+// 4. Bob calculates T = b * P = b * (a * g). 
+assert(ecdh_shared_secret(n2, n1, secb));
+
+// 5. Assert equality, i.e. check that both parties calculated the same value. 
+for (int i = 0; i < ECC_PUB_KEY_SIZE; ++i)
+{ assert(seca[i] == secb[i]); }
+
+ecdh_generate_keys(pub, prv);
+// No asserts - ECDSA functionality is broken... 
+ecdsa_sign((const uint8_t*)prv, msg, k, signature);
+ecdsa_verify((const uint8_t*)pub, msg, (const uint8_t*)signature); // fails..
 
 
 

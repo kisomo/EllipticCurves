@@ -1606,10 +1606,17 @@ uint8_t generate_hex8(void)
 printf("generate_hex8() = %u\n", generate_hex8());
 uint8_t n1 = generate_hex8(); printf("n1 = %u\n",n1);
 uint8_t n2 = generate_hex8(); printf("n2 = %u\n",n2);
+uint8_t n3 = generate_hex8(); printf("n3 = %u\n",n3);
 generate_pub_priv(&n1,&n2);
 printf("n1 = %u\n",n1);
+printf("n2 = %u\n",n2);
+printf("n3 = %u\n",n3);
 //for(int i=0; i< BITVEC_NWORDS; i++)
 //{printf("%X",n1[i]); } printf("\n");
+
+assert(ecdh_generate_keys(&n1, &n2));
+
+
 
 
 

@@ -1597,30 +1597,89 @@ int generate_pub_priv(uint8_t* pub, uint8_t* priv)
 //uint32_t *n1; n1 = (uint8_t *)generate_hex(); 
 //uint32_t *n2;n2 = (uint8_t *)generate_hex(); 
 
-uint8_t generate_hex8(void)
-{ uint8_t x;
+uint32_t generate_hex48(void)
+{ uint32_t x;
   x = rand() & 0xff;
+  x |= (rand() & 0xff) << 8;
+  x |= (rand() & 0xff) << 8;
+  //x |= (rand() & 0xff) << 24;
+  //x |= (rand() & 0xff) << 32;
+  //x |= (rand() & 0xff) << 40;
   return x;
 }
 
-printf("generate_hex8() = %u\n", generate_hex8());
-uint8_t n1 = generate_hex8(); printf("n1 = %u\n",n1);
-uint8_t n2 = generate_hex8(); printf("n2 = %u\n",n2);
-uint8_t n3 = generate_hex8(); printf("n3 = %u\n",n3);
-generate_pub_priv(&n1,&n2);
-printf("n1 = %u\n",n1);
-printf("n2 = %u\n",n2);
-printf("n3 = %u\n",n3);
+uint16_t generate_hex24(void)
+{ uint16_t x;
+  x = rand() & 0xff;
+  x |= (rand() & 0xff) << 8;
+  //x |= (rand() & 0xff) << 16;
+  //x |= (rand() & 0xff) << 24;
+  return x;
+}
+
+uint8_t generate_hex8(void)
+{ uint8_t x;
+  x = rand() & 0xff;
+  //x |= (rand() & 0xff) << 8;
+  //x |= (rand() & 0xff) << 16;
+  //x |= (rand() & 0xff) << 24;
+  return x;
+}
+
+static uint8_t puba[ECC_PUB_KEY_SIZE];
+static uint8_t priva[ECC_PRV_KEY_SIZE];
+static uint8_t seca[ECC_PUB_KEY_SIZE];
+static uint8_t pubb[ECC_PUB_KEY_SIZE];
+static uint8_t privb[ECC_PRV_KEY_SIZE];
+static uint8_t secb[ECC_PUB_KEY_SIZE];
+
+printf("ECC_PUB_KEY_SIZE = %d\n",ECC_PUB_KEY_SIZE);
+printf("ECC_PRV_KEY_SIZE = %d\n", ECC_PRV_KEY_SIZE);
+
+printf("generate_hex48() = %d\n", generate_hex48());
+
+for(int i =0; i < ECC_PUB_KEY_SIZE; i++)
+{
+   puba[i] = generate_hex48();
+   //seca[i] = generate_hex48();
+   pubb[i] = generate_hex48();
+   //secb[i] = generate_hex48();
+}
+
+for(int i =0; i < ECC_PRV_KEY_SIZE; i++)
+{
+   priva[i] = generate_hex48();
+   privb[i] = generate_hex48();
+}
+
+for(int i = 0; i < ECC_PUB_KEY_SIZE; i++)
+{ printf("%x",puba[i]);} printf("\n");
+
+//puba = generate_hex48(); 
+//printf("puba = %u\n",puba);
+//priv = generate_hex48(); printf("priva = %u\n",*priva);
+//seca = generate_hex48(); printf("seca = %u\n",*seca);
+
+uint8_t pub = generate_hex8(); printf("pub = %u\n",pub);
+uint8_t priv = generate_hex8(); printf("priv = %u\n",priv);
+//secb = generate_hex8(); printf("secb = %u\n",secb);
+
+//generate_pub_priv(&puba,&priva);
+//printf("puba = %u\n",puba);
+//printf("priva = %u\n",priva);
+//printf("seca = %u\n",seca);
 //for(int i=0; i< BITVEC_NWORDS; i++)
 //{printf("%X",n1[i]); } printf("\n");
 
-assert(ecdh_generate_keys(&n1, &n2));
+assert(ecdh_generate_keys(&pub, &priv));
 
 // 3. Alice calculates S = a * Q = a * (b * g). 
-assert(ecdh_shared_secret(n2, n1, seca));
-
+ecdh_shared_secret(&priva, &pubb, &seca);
+//assert(ecdh_shared_secret(&n2, &n1, &n3));
+/*
 // 4. Bob calculates T = b * P = b * (a * g). 
-assert(ecdh_shared_secret(n2, n1, secb));
+ecdh_shared_secret(&privb, &puba, &secb);
+//assert(ecdh_shared_secret(n2, n1, secb));
 
 // 5. Assert equality, i.e. check that both parties calculated the same value. 
 for (int i = 0; i < ECC_PUB_KEY_SIZE; ++i)
@@ -1630,7 +1689,7 @@ ecdh_generate_keys(pub, prv);
 // No asserts - ECDSA functionality is broken... 
 ecdsa_sign((const uint8_t*)prv, msg, k, signature);
 ecdsa_verify((const uint8_t*)pub, msg, (const uint8_t*)signature); // fails..
-
+*/
 
 
 

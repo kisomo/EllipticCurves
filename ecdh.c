@@ -836,6 +836,76 @@ int ecdsa_sign(const uint8_t* private_key, uint8_t* hash, uint8_t* random_k, uin
   return success;
 }
 
+int ecdsa_sign_terrence(const uint8_t* private_key, uint8_t* hash, uint8_t* signature)
+{
+  
+     //1) calculate e = HASH(m)
+     //2) let z be the Ln leftmost bits of e, where Ln is the bit length of the group order n
+     //3) Select a cryptographically secure random integer k from [1, n-1]
+     //4) Calculate the curve point (x1, y1) = k * G
+     //5) Calculate r = x1 mod n - if (r == 0) goto 3
+     //6) Calculate s = inv(k) * (z + r * d) mod n - if (s == 0) goto 3
+     //7) The signature is the pair (r, s)
+  
+  assert(private_key != 0);
+  assert(hash != 0);
+  //assert(random_k != 0);
+  assert(signature != 0);
+
+  int success = 0;
+
+  if ((bitvec_degree((uint32_t*)private_key) >= (CURVE_DEGREE / 2)))
+  {
+    gf2elem_t r, s, z, k;
+    bitvec_set_zero(r); bitvec_set_zero(s); bitvec_copy(z, (uint32_t*)hash);
+
+    // 1 + 2 
+    int nbits = bitvec_degree(base_order); int i;
+    for (i = (nbits - 1); i < BITVEC_NBITS; ++i)
+    { bitvec_clr_bit(z, i); }
+
+    // 3 
+    bitvec_copy(k, (uint32_t*)private_key);
+
+    // 4 
+    gf2point_copy(r, s, base_x, base_y);
+    gf2point_mul(r, s, k);
+
+    // 5 
+    if (!bitvec_is_zero(r))
+    {
+      // 6) s = inv(k) * (z + (r * d)) mod n ==> if (s == 0) goto 3 
+      gf2field_inv(s, k);                     // s = inv(k) 
+      gf2field_mul(r, r, (uint32_t*)private_key); // r = (r * d) 
+      gf2field_add(r, r, z);                  // r = z + (r * d) 
+
+      nbits = bitvec_degree(r); // r = r mod n 
+      for (i = (nbits - 1); i < BITVEC_NBITS; ++i)
+      {
+        printf("reduction r\n");
+        bitvec_clr_bit(r, i);
+      }
+      
+      gf2field_mul(s, s, r);                  // s = inv(k) * (z * (r * d)) 
+
+      nbits = bitvec_degree(s); // s = s mod n 
+      for (i = (nbits - 1); i < BITVEC_NBITS; ++i)
+      {
+        printf("reduction s\n");
+        bitvec_clr_bit(s, i);
+      }
+
+      if (!bitvec_is_zero(s))
+      {
+        bitvec_copy((uint32_t*)signature, r);
+        bitvec_copy((uint32_t*)(signature + ECC_PRV_KEY_SIZE), s);
+        success = 1;
+      }
+    }
+  }
+  return success;
+}
+
 
 int ecdsa_verify(const uint8_t* public_key, uint8_t* hash, const uint8_t* signature)
 {
@@ -1690,11 +1760,14 @@ ecdh_shared_secret((uint8_t *)privb, (uint8_t *)puba, (uint8_t *)secb);
 //assert(ecdh_shared_secret(n2, n1, secb));
 
 // 5. Assert equality, i.e. check that both parties calculated the same value. 
-for (int i = 0; i < ECC_PUB_KEY_SIZE; ++i)
+for(int i = 0; i < ECC_PUB_KEY_SIZE; ++i)
 { assert(seca[i] == secb[i]); }
 
 // No asserts - ECDSA functionality is broken... 
-ecdsa_sign((const uint8_t*)priva, msg, k, signature);
+//ecdsa_sign((const uint8_t*)priva, msg, k, signature);
+static uint8_t  msg[ECC_PRV_KEY_SIZE];
+static uint8_t  signature[ECC_PUB_KEY_SIZE];
+assert(ecdsa_sign_terrence((const uint8_t*)priva, msg, signature));
 
 //ecdsa_verify((const uint8_t*)pub, msg, (const uint8_t*)signature); // fails..
 

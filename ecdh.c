@@ -1510,6 +1510,8 @@ printf("gf2point_on_curve(x1, y1) = %d\n",gf2point_on_curve(x1, y1));
 // ================================================================================================
 // ================== generate points on the curve ================================================
 // ================================================================================================
+// Use current time as seed for random generator
+srand(time(0));
 
 uint32_t generate_hex(void)
 { uint32_t x;
@@ -1640,28 +1642,31 @@ printf("generate_hex48() = %d\n", generate_hex48());
 
 for(int i =0; i < ECC_PUB_KEY_SIZE; i++)
 {
-   puba[i] = generate_hex48();
-   //seca[i] = generate_hex48();
-   pubb[i] = generate_hex48();
-   //secb[i] = generate_hex48();
+   puba[i] = generate_hex8();
+   seca[i] = generate_hex8();
+   pubb[i] = generate_hex8();
+   secb[i] = generate_hex8();
 }
 
 for(int i =0; i < ECC_PRV_KEY_SIZE; i++)
 {
-   priva[i] = generate_hex48();
-   privb[i] = generate_hex48();
+   priva[i] = generate_hex8();
+   privb[i] = generate_hex8();
 }
 
 for(int i = 0; i < ECC_PUB_KEY_SIZE; i++)
-{ printf("%x",puba[i]);} printf("\n");
+{ printf("%d,\t",pubb[i]);} printf("\n\n");
+
+for(int i = 0; i < ECC_PUB_KEY_SIZE; i++)
+{ printf("%d,\t",pubb[i]);} printf("\n\n");
 
 //puba = generate_hex48(); 
 //printf("puba = %u\n",puba);
 //priv = generate_hex48(); printf("priva = %u\n",*priva);
 //seca = generate_hex48(); printf("seca = %u\n",*seca);
 
-uint8_t pub = generate_hex8(); printf("pub = %u\n",pub);
-uint8_t priv = generate_hex8(); printf("priv = %u\n",priv);
+//uint8_t pub = generate_hex8(); printf("pub = %u\n",pub);
+//uint8_t priv = generate_hex8(); printf("priv = %u\n",priv);
 //secb = generate_hex8(); printf("secb = %u\n",secb);
 
 //generate_pub_priv(&puba,&priva);
@@ -1671,25 +1676,38 @@ uint8_t priv = generate_hex8(); printf("priv = %u\n",priv);
 //for(int i=0; i< BITVEC_NWORDS; i++)
 //{printf("%X",n1[i]); } printf("\n");
 
-assert(ecdh_generate_keys(&pub, &priv));
+assert(ecdh_generate_keys((uint8_t *)puba, (uint8_t *)priva)); // puba = a*G
+assert(ecdh_generate_keys((uint8_t *)pubb, (uint8_t *)privb)); // pubb = b*G
+for(int i = 0; i < ECC_PUB_KEY_SIZE; i++)
+{ printf("%d,\t",pubb[i]);} printf("\n");
 
 // 3. Alice calculates S = a * Q = a * (b * g). 
-ecdh_shared_secret(&priva, &pubb, &seca);
+ecdh_shared_secret((uint8_t *)priva, (uint8_t *)pubb, (uint8_t *)seca);
 //assert(ecdh_shared_secret(&n2, &n1, &n3));
-/*
+
 // 4. Bob calculates T = b * P = b * (a * g). 
-ecdh_shared_secret(&privb, &puba, &secb);
+ecdh_shared_secret((uint8_t *)privb, (uint8_t *)puba, (uint8_t *)secb);
 //assert(ecdh_shared_secret(n2, n1, secb));
 
 // 5. Assert equality, i.e. check that both parties calculated the same value. 
 for (int i = 0; i < ECC_PUB_KEY_SIZE; ++i)
 { assert(seca[i] == secb[i]); }
 
-ecdh_generate_keys(pub, prv);
 // No asserts - ECDSA functionality is broken... 
-ecdsa_sign((const uint8_t*)prv, msg, k, signature);
-ecdsa_verify((const uint8_t*)pub, msg, (const uint8_t*)signature); // fails..
+ecdsa_sign((const uint8_t*)priva, msg, k, signature);
+
+//ecdsa_verify((const uint8_t*)pub, msg, (const uint8_t*)signature); // fails..
+
+
+/*
+static uint8_t n8 = 255;
+static unsigned char c8 = 255;
+static char c9 = 127;
+printf("n8 = %u\n",n8);
+printf("c8 = %u\n",c8);
+printf("c9 = %c\n",c9);
 */
+
 
 
 

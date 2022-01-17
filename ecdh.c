@@ -776,7 +776,7 @@ int ecdsa_sign(const uint8_t* private_key, uint8_t* hash, uint8_t* random_k, uin
   assert(signature != 0);
 
   int success = 0;
-
+  
   if (    (bitvec_degree((uint32_t*)private_key) >= (CURVE_DEGREE / 2))
        && !bitvec_is_zero((uint32_t*)random_k) )
   {
@@ -787,6 +787,7 @@ int ecdsa_sign(const uint8_t* private_key, uint8_t* hash, uint8_t* random_k, uin
     bitvec_copy(z, (uint32_t*)hash);
 
     // 1 + 2 
+    
     int nbits = bitvec_degree(base_order);
     int i;
     for (i = (nbits - 1); i < BITVEC_NBITS; ++i)
@@ -971,11 +972,13 @@ int ecdsa_verify(const uint8_t* public_key, uint8_t* hash, const uint8_t* signat
     // 6) (x,y) = (u1 * G) + (u2 * public) 
     bitvec_copy(x1, base_x);
     bitvec_copy(y1, base_y);
-    gf2field_mul(u1, x1, y1);  // u1 * G 
+    //gf2field_mul(u1, x1, y1);  // u1 * G 
+    gf2field_mul(x1, y1,u1);  // u1 * G // TERRENCE
 
     bitvec_copy(w, (uint32_t*)(public_key));
     bitvec_copy(z, (uint32_t*)(public_key + ECC_PRV_KEY_SIZE));
-    gf2field_mul(u2, w, z); // u2 * Q 
+    //gf2field_mul(u2, w, z); // u2 * Q 
+    gf2field_mul(w, z,u2); // u2 * Q // TERRENCE
 
     
     gf2point_add(x1, y1, w, z);
@@ -992,7 +995,7 @@ int ecdsa_verify(const uint8_t* public_key, uint8_t* hash, const uint8_t* signat
       printf("x = '");
       for (i = 0; i < BITVEC_NWORDS; ++i)
       {
-        printf("%.08x", x1[i]);
+        printf("%.08x ", x1[i]);
       }
       printf("' [%u]\n", i);
       printf("r = '");
@@ -1767,9 +1770,22 @@ for(int i = 0; i < ECC_PUB_KEY_SIZE; ++i)
 //ecdsa_sign((const uint8_t*)priva, msg, k, signature);
 static uint8_t  msg[ECC_PRV_KEY_SIZE];
 static uint8_t  signature[ECC_PUB_KEY_SIZE];
-assert(ecdsa_sign_terrence((const uint8_t*)priva, msg, signature));
+uint8_t  k[ECC_PRV_KEY_SIZE];
 
-//ecdsa_verify((const uint8_t*)pub, msg, (const uint8_t*)signature); // fails..
+for(int i = 0; i < ECC_PUB_KEY_SIZE; i++)
+{ printf("%d,\t",signature[i]);
+ signature[i] = generate_hex8();} printf("\n");
+
+for(int i = 0; i < ECC_PRV_KEY_SIZE; i++)
+{ printf("%d,\t",k[i]);
+ k[i] = generate_hex8();} printf("\n");
+
+assert(ecdsa_sign((const uint8_t*)priva, msg,k, signature));
+//printf(" signature  return = %d\n",ecdsa_sign((const uint8_t*)priva, msg,k, signature) );
+for(int i = 0; i < ECC_PUB_KEY_SIZE; i++)
+{ printf("%d,\t",signature[i]);} printf("\n");
+
+ecdsa_verify((const uint8_t*)puba, msg, (const uint8_t*)signature); // fails..
 
 
 /*

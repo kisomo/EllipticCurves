@@ -972,13 +972,11 @@ int ecdsa_verify(const uint8_t* public_key, uint8_t* hash, const uint8_t* signat
     // 6) (x,y) = (u1 * G) + (u2 * public) 
     bitvec_copy(x1, base_x);
     bitvec_copy(y1, base_y);
-    //gf2field_mul(u1, x1, y1);  // u1 * G 
-    gf2field_mul(x1, y1,u1);  // u1 * G // TERRENCE
+    gf2field_mul(u1, x1, y1);  // u1 * G 
 
     bitvec_copy(w, (uint32_t*)(public_key));
     bitvec_copy(z, (uint32_t*)(public_key + ECC_PRV_KEY_SIZE));
-    //gf2field_mul(u2, w, z); // u2 * Q 
-    gf2field_mul(w, z,u2); // u2 * Q // TERRENCE
+    gf2field_mul(u2, w, z); // u2 * Q 
 
     
     gf2point_add(x1, y1, w, z);
@@ -1012,6 +1010,39 @@ int ecdsa_verify(const uint8_t* public_key, uint8_t* hash, const uint8_t* signat
   }
 
   return success;
+}
+
+int hack_k(gf2elem_t r,gf2elem_t s,gf2elem_t s1,uint8_t * hash, uint8_t * hash1)
+{ 
+  int success = 0;
+  gf2elem_t z,z1, res;
+  gf2elem_t x,y;
+
+  bitvec_copy(z, (uint32_t*)hash); 
+  bitvec_copy(z1, (uint32_t*)hash1); 
+  
+  //gf2field_inv(res, s-s1);
+
+  //bitvec_copy(x, (uint32_t*)(z-z1));
+  //bitvec_copy(y, (uint32_t*)(z-z1 + ECC_PRV_KEY_SIZE));  
+  //gf2field_mul(x, y,res); 
+
+  if(!res)
+  {
+    success = 1;
+  }
+
+  return success;
+
+}
+
+
+int recover_pub(uint8_t *hash, gf2elem_t r,gf2elem_t s)
+{
+   int success = 0;
+
+   return success;
+
 }
 
 

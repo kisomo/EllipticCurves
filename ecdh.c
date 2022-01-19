@@ -1013,14 +1013,14 @@ int ecdsa_verify(const uint8_t* public_key, uint8_t* hash, const uint8_t* signat
 int hack_k(gf2elem_t r,gf2elem_t s,gf2elem_t s1,uint8_t * hash, uint8_t * hash1)
 { 
   int success = 0;
-  gf2elem_t z,z1, sum_s, sum_z, k, k_s, priv;
+  gf2elem_t z,z1, sum_s, sum_z, k, k_s, priv, res;
   gf2elem_t x,y;
 
   bitvec_copy(z, (uint32_t*)hash); 
   bitvec_copy(z1, (uint32_t*)hash1); 
   
-  gf2field_add(sum_s,s,-s1);
-  gf2field_add(sum_z, z,-z1);
+  gf2field_add(sum_s,s,s1);
+  gf2field_add(sum_z, z,z1);
   gf2field_mul(k,sum_s,sum_z);
 
   

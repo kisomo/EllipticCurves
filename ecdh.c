@@ -1823,6 +1823,7 @@ printf("++++++++++++++++ signature after +++++++++++++++++++++++++++\n");
 for(int i = 0; i < ECC_PUB_KEY_SIZE; i++)
 { printf("%d,\t",signature[i]);} printf("\n");
 
+
 //ecdsa_verify((const uint8_t*)puba, msg, (const uint8_t*)signature); // fails..
 ecdsa_verify((const uint8_t*)puba, msg, signature); // fails
 

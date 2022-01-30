@@ -26,8 +26,8 @@ br_i31_add(uint32_t *a, const uint32_t *b, uint32_t ctl)
 }
 
 uint32_t *a; const uint32_t *b; uint32_t ct, res;
-
-*a = 344; *b = 344; ct = 344;
-res = br_i31_add(&a, &b, ctl);
+uint32_t x1 = 344; const uint32_t y1 = 333;
+a = &x1; b = &y1; ct = x1;
+res = br_i31_add(a, b, ctl);
 printf("res = %u\n", res);
 

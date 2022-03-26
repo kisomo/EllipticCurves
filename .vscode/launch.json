@@ -5,6 +5,13 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "type": "java",
+            "name": "Launch MergeSort",
+            "request": "launch",
+            "mainClass": "MergeSort",
+            "projectName": "EllipticCurves_f8126479"
+        },
+        {
             "name": "gcc-9 - Build and debug active file",
             "type": "cppdbg",
             "request": "launch",
